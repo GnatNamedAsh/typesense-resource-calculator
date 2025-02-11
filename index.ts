@@ -82,45 +82,46 @@ const getMemoryUsageForCollection = async (collection: ParsedCollection) => {
       const { name, type } = field
       let fieldMemoryUsage = 0
       if (document[name]) {
-        switch (type) {
+        const fieldType = type as keyof typeof fieldTypeMemoryUsage
+        switch (fieldType) {
           case 'string':
-            fieldMemoryUsage = document[name].length * fieldTypeMemoryUsage[type as keyof typeof fieldTypeMemoryUsage]
+            fieldMemoryUsage = document[name].length
             break
           case 'int32':
-            fieldMemoryUsage = fieldTypeMemoryUsage[type as keyof typeof fieldTypeMemoryUsage]
+            fieldMemoryUsage = fieldTypeMemoryUsage[fieldType]
             break
           case 'float':
-            fieldMemoryUsage = fieldTypeMemoryUsage[type as keyof typeof fieldTypeMemoryUsage]
+            fieldMemoryUsage = fieldTypeMemoryUsage[fieldType]
             break
           case 'bool':
-            fieldMemoryUsage = fieldTypeMemoryUsage[type as keyof typeof fieldTypeMemoryUsage]
+            fieldMemoryUsage = fieldTypeMemoryUsage[fieldType]
             break
           case 'object':
             // we can't know the memory usage of an object, so we'll just use the size of the JSON string
-            fieldMemoryUsage = JSON.stringify(document[name]).length * fieldTypeMemoryUsage[type as keyof typeof fieldTypeMemoryUsage]
+            fieldMemoryUsage = JSON.stringify(document[name]).length * fieldTypeMemoryUsage[fieldType]
             break
           case 'int64':
-            fieldMemoryUsage = fieldTypeMemoryUsage[type as keyof typeof fieldTypeMemoryUsage]
+            fieldMemoryUsage = fieldTypeMemoryUsage[fieldType]
             break
           case 'auto':
             // we can't know the memory usage of an auto field, so we'll just use the size of the JSON string
-            fieldMemoryUsage = JSON.stringify(document[name]).length * fieldTypeMemoryUsage[type as keyof typeof fieldTypeMemoryUsage]
+            fieldMemoryUsage = JSON.stringify(document[name]).length * fieldTypeMemoryUsage[fieldType]
             break
           case 'auto[]':
             // we can't know the memory usage of an auto field, so we'll just use the size of the JSON string
             fieldMemoryUsage = (document[name].reduce((acc: number, element: any) => {
-              return acc + JSON.stringify(element).length * fieldTypeMemoryUsage[type as keyof typeof fieldTypeMemoryUsage]
+              return acc + JSON.stringify(element).length * fieldTypeMemoryUsage[fieldType]
             }, 0) as number)
             break
           case 'object[]':
             // we can't know the memory usage of an object, so we'll just use the size of the JSON string
             fieldMemoryUsage = (document[name].reduce((acc: number, element: any) => {
-              return acc + JSON.stringify(element).length * fieldTypeMemoryUsage[type as keyof typeof fieldTypeMemoryUsage]
+              return acc + JSON.stringify(element).length * fieldTypeMemoryUsage[fieldType]
             }, 0) as number)
             break
           default:
             // assuming the rest of the types are arrays, we'll just use the length of the array * the memory usage of the type
-            fieldMemoryUsage = document[name].length * fieldTypeMemoryUsage[type as keyof typeof fieldTypeMemoryUsage]
+            fieldMemoryUsage = document[name].length * fieldTypeMemoryUsage[fieldType]
             break
         }
         if (Number.isNaN(fieldMemoryUsage)) {
