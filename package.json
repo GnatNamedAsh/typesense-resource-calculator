@@ -1,0 +1,15 @@
+{
+  "name": "typesense-resource-calculator",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.26.7",
+    "typesense": "^1.8.2"
+  }
+}
